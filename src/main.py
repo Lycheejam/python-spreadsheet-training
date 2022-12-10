@@ -1,4 +1,5 @@
 from google.oauth2 import service_account
+import gspread
 import os
 import traceback
 
@@ -25,7 +26,7 @@ class ManipulationSpreadsheet:
                 filename=service_account_file_path, scopes=scopes
             )
 
-            return credentials
+            return gspread.authorize(credentials)
 
         except Exception:
             print(traceback.format_exc())
