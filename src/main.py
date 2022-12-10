@@ -1,5 +1,6 @@
 from google.oauth2 import service_account
 import os
+import traceback
 
 
 class ManipulationSpreadsheet:
@@ -18,11 +19,16 @@ class ManipulationSpreadsheet:
             "https://www.googleapis.com/auth/drive",
             "https://www.googleapis.com/auth/spreadsheets",
         ]
-        credentials = service_account.Credentials.from_service_account_file(
-            filename=service_account_file_path, scopes=scopes
-        )
 
-        return credentials
+        try:
+            credentials = service_account.Credentials.from_service_account_file(
+                filename=service_account_file_path, scopes=scopes
+            )
+
+            return credentials
+
+        except Exception:
+            print(traceback.format_exc())
 
 
 if __name__ == "__main__":
