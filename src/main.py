@@ -1,55 +1,54 @@
-from google.oauth2 import service_account
 import gspread
+from gspread import Client, Spreadsheet, Worksheet
 import os
 import traceback
+from pathlib import Path
 
 
 class ManipulationSpreadsheet:
-    def main(self):
-        credentials = self.authorize_credentials()
-        print(credentials)
+    def __init__(self) -> None:
+        self.client = self.authorize_service_account()
 
-    def authorize_credentials(self, service_account_file_path=None):
-        if service_account_file_path is None:
+    def main(self) -> None:
+        spreadsheet = self.create_spreadsheet("test desu")
+        worksheet = self.get_sheet(spreadsheet)
+
+        print(worksheet)
+
+    def authorize_service_account(self, service_account_file_path: str = "") -> Client:
+        if service_account_file_path == "":
             # NOTICE: SENSITIVE INFO FILE !!!!!
             service_account_file_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), "../secrets.json"
             )
 
-        scopes = [
-            "https://www.googleapis.com/auth/drive",
-            "https://www.googleapis.com/auth/spreadsheets",
-        ]
-
         try:
-            credentials = service_account.Credentials.from_service_account_file(
-                filename=service_account_file_path, scopes=scopes
-            )
-
-            return gspread.authorize(credentials)
+            return gspread.service_account(filename=Path(service_account_file_path))
 
         except Exception:
             print(traceback.format_exc())
 
-    def create_spreadsheet(self, authorized_credential, spreadsheet_name):
+    def create_spreadsheet(
+        self, spreadsheet_name: str = "default spreadsheet name"
+    ) -> Spreadsheet:
         try:
-            return authorized_credential.create(spreadsheet_name)
+            return self.client.create(spreadsheet_name)
         except Exception:
             print(traceback.format_exc())
 
-    def get_spreadsheet(self, authorized_credential, spreadsheet_id):
+    def get_spreadsheet(self, spreadsheet_id: str) -> Spreadsheet:
         try:
-            return authorized_credential.open_by_key(spreadsheet_id)
+            return self.client.open_by_key(spreadsheet_id)
         except Exception:
             print(traceback.format_exc())
 
-    def get_sheet(self, spreadsheet):
+    def get_sheet(self, spreadsheet: Spreadsheet) -> Worksheet:
         try:
             return spreadsheet.sheet1()
         except Exception:
             print(traceback.format_exc())
 
-    def share_spreadsheet(self, spreadsheet):
+    def share_spreadsheet(self, spreadsheet: Spreadsheet):
         # NOTE: replace mail address
         response = spreadsheet.share(
             "example@example.com", perm_type="user", role="writer"
