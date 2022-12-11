@@ -69,5 +69,5 @@ class ManipulationSpreadsheet:
 
 
 if __name__ == "__main__":
-    get_data_to_spreadsheet = ManipulationSpreadsheet()
-    get_data_to_spreadsheet.main()
+    manipulation_spreadsheet = ManipulationSpreadsheet()
+    manipulation_spreadsheet.main()
