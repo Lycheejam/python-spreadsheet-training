@@ -11,8 +11,19 @@ class ManipulationSpreadsheet:
 
     def main(self) -> None:
         spreadsheet = self.create_spreadsheet("test desu")
-        worksheet = self.get_sheet(spreadsheet)
+        self.share_spreadsheet(spreadsheet)
 
+        data = [
+            ["id", "name"],
+            [1, "yamada"],
+            [2, "suzuki"],
+            [3, "tanaka"],
+        ]
+
+        response = self.data_update(spreadsheet, data)
+        print(response)
+
+        worksheet = self.get_sheet(spreadsheet)
         print(worksheet)
 
     def authorize_service_account(self, service_account_file_path: str = "") -> Client:
@@ -42,9 +53,9 @@ class ManipulationSpreadsheet:
         except Exception:
             print(traceback.format_exc())
 
-    def get_sheet(self, spreadsheet: Spreadsheet) -> Worksheet:
+    def get_sheet(self, spreadsheet: Spreadsheet, index: int = 0) -> Worksheet:
         try:
-            return spreadsheet.sheet1()
+            return spreadsheet.get_worksheet(index)
         except Exception:
             print(traceback.format_exc())
 
@@ -56,13 +67,13 @@ class ManipulationSpreadsheet:
 
         return response
 
-    def value_update_spreadsheet(self, spreadsheet, formated_results):
+    def data_update(self, spreadsheet: Spreadsheet, data):
         response = spreadsheet.values_update(
             "Sheet1!A1",
             params={
                 "valueInputOption": "RAW",
             },
-            body={"values": formated_results},
+            body={"values": data},
         )
 
         return response
